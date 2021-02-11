@@ -1,3 +1,37 @@
+.gradle
+/build/
+!gradle/wrapper/gradle-wrapper.jar
+logs/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+/out/
+out
+gen
+logs
+target
+
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+.DS_Store
+
 # Compiled class file
 *.class
 
