@@ -1,50 +1,58 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.4.30'
     id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
 }
 
-group = 'com.alejojamc'
-version = '1.0-SNAPSHOT'
+group "com.alejojamc"
+version "0.0.1"
+mainClassName = "io.ktor.server.jetty.EngineMain"
 
 repositories {
-    jcenter()
     mavenCentral()
-    maven { url 'https://dl.bintray.com/kotlin/kotlinx' }
+    jcenter()
+    maven { url 'https://jitpack.io' }
     maven { url 'https://dl.bintray.com/kotlin/ktor' }
+    maven { url 'https://dl.bintray.com/kotlin/kotlinx' }
 }
 
 dependencies {
     // Kotlin ktor
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "io.ktor:ktor-server-jetty:$ktor_version"
+    implementation "ch.qos.logback:logback-classic:$logback_version"
     implementation "io.ktor:ktor-server-core:$ktor_version"
-    implementation "io.ktor:ktor-server-netty:$ktor_version"
-    implementation 'io.ktor:ktor-html-builder:1.4.0'
 
-    implementation "io.ktor:ktor-html-builder:$ktor_version"
-    implementation 'org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2'
+    // Web Server
+    implementation "io.ktor:ktor-client-core:$ktor_version"
+    implementation "io.ktor:ktor-client-core-jvm:$ktor_version"
+    implementation "io.ktor:ktor-client-jetty:$ktor_version"
+    implementation "io.ktor:ktor-client-okhttp:$ktor_version"
 
-    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
+    // Content Negotiation
+    implementation "io.ktor:ktor-jackson:$ktor_version"
+    implementation "io.ktor:ktor-client-jackson:$ktor_version"
+    implementation "io.ktor:ktor-client-json-jvm:$ktor_version"
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: '2.11.2'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.11.2'
+    compile group: 'com.typesafe', name: 'config', version: '1.4.0'
+    compile group: 'io.github.config4k', name: 'config4k', version: '0.4.2'
 
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
-    testCompile group: 'org.slf4j', name: 'slf4j-nop', version: '1.7.30'
-    testCompile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.30'
-    testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
-    testCompile group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.30'
+    //DB
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.14'
+    compile group: 'com.zaxxer', name: 'HikariCP', version: '2.2.5'
+    compile group: 'org.flywaydb', name: 'flyway-core', version: '7.0.2'
 
-}
+    //Redis
+    compile group: 'redis.clients', name: 'jedis', version: '2.8.1'
 
-test {
-    useJUnit()
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = '1.8'
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = '1.8'
-}
-
-application {
-    mainClassName = 'ServerKt'
+    // Testing
+    testImplementation "io.ktor:ktor-server-tests:$ktor_version"
+    testRuntimeOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    testImplementation "org.spekframework.spek2:spek-dsl-jvm:2.0.13"
+    testRuntimeOnly "org.spekframework.spek2:spek-runner-junit5:2.0.13"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.4.0"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
+    testImplementation "io.mockk:mockk:1.10.2"
+    testImplementation "io.ktor:ktor-client-mock:$ktor_version"
+    testImplementation "io.ktor:ktor-client-mock-jvm:$ktor_version"
 }

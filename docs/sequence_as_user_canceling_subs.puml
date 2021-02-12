@@ -1,0 +1,28 @@
+@startuml
+
+autonumber
+
+actor User
+control App
+participant Gyservice
+
+User -> App: Get list of subscriptions
+App -> Gyservice: Get list of subscriptions
+Gyservice -> App: List of subscriptions
+App -> User: Render list of subscriptions
+
+loop N times
+User -> App: Select subscription
+App -> Gyservice: Get subscription detail
+Gyservice --> Gyservice: subscription Detail
+Gyservice -> App: Product Detail
+App -> User: Render product Detail
+
+User -> App: Cancel subscription
+App -> Gyservice: Update subscription state
+Gyservice --> Gyservice: Remove subscription state
+Gyservice -> App: 200 Ok
+App -> User: removing subscription successfully
+end
+
+@enduml
