@@ -1,5 +1,7 @@
 package com.alejojamc.entities
 
+import com.alejojamc.utils.EN
+
 data class DataSourceConfig(
     val host: String,
     val name: String,
@@ -22,6 +24,8 @@ data class DataSourceConfig(
 
 data class Gyservice(
     val version: String,
+    val country: String,
+    val locale: String? = EN,
 ) {
     init {
         require(version.isNotBlank()) { "Gyservice version must not be blank" }

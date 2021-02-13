@@ -8,9 +8,10 @@ import io.ktor.routing.Route
 class ControllerComposer(
     config: Config,
     route: Route,
+    serviceComposer: ServiceComposer,
 ) {
 
     val healthController = HealthController(config, route)
-    val productController = ProductController(config, route)
+    val productController = ProductController(route, serviceComposer.productService)
 
 }

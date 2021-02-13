@@ -1,7 +1,8 @@
 package com.alejojamc.controllers
 
 import com.alejojamc.entities.Product
-import com.typesafe.config.Config
+import com.alejojamc.exceptions.ProductExceptions
+import com.alejojamc.services.ProductService
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
@@ -10,8 +11,8 @@ import io.ktor.routing.*
 
 
 class ProductController(
-    config: Config,
     route: Route,
+    private val productService: ProductService
 ) {
 
     init {
@@ -28,7 +29,7 @@ class ProductController(
             route("/{productId}") {
                 get {
                     val brandId = call.parameters[PRODUCT_ID_PARAM]
-                    getProduct(brandId)?.let { it1 -> call.respond(it1) }
+                    getProductById(brandId)?.let { it1 -> call.respond(it1) }
                 }
                 delete {
                     val brandId = call.parameters[PRODUCT_ID_PARAM]
@@ -39,22 +40,28 @@ class ProductController(
         }
     }
 
-    private suspend fun getProduct(productId: String?): Product? {
-        // add service
-        // add exception
-        return null
+    private suspend fun getProducts(): List<Product> {
+        return productService.getProducts()
+    }
+
+    private suspend fun getProductById(productId: String?): Product? {
+        return productId?.let {
+            productService.getProductById(it.toLong())
+        } ?: throw ProductExceptions.ProductBadRequest()
     }
 
     private suspend fun insertProduct(product: Product) {
-        // Add service
+        return productService.insertProduct(product)
     }
 
     private suspend fun updateProduct(product: Product) {
-        // Add service
+        return productService.updateProduct(product)
     }
 
     private suspend fun deleteProduct(productId: String?) {
-        // Add service
+        return productId?.let {
+            productService.deleteProduct(it.toLong())
+        } ?: throw ProductExceptions.ProductBadRequest()
     }
 
     companion object {

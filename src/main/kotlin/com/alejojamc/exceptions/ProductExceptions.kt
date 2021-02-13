@@ -10,6 +10,11 @@ sealed class ProductExceptions(
     override var args: List<String>? = null,
 ) : ApplicationError(httpStatus, code, args) {
 
+    class ProductBadRequest : ProductExceptions(
+        httpStatus = HttpStatusCode.BadRequest,
+        code = "error.repository.product.bad.request"
+    )
+
     class SelectProductsError : ProductExceptions(
         httpStatus = HttpStatusCode.InternalServerError,
         code = "error.repository.product.list"

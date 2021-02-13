@@ -5,6 +5,7 @@ import java.util.Properties
 
 
 class Messages(locale: Locale) {
+
     private var properties: Properties
 
     init {
@@ -37,4 +38,5 @@ class Messages(locale: Locale) {
         private const val BASE_FILE_NAME = "messages"
         private const val PROPERTIES_EXTENSION = ".properties"
     }
+
 }

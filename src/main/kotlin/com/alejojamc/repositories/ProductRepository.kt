@@ -11,39 +11,44 @@ import java.sql.SQLException
 import javax.sql.DataSource
 
 
-open class ProductRepository(private val dataSource: DataSource) {
+open class ProductRepository    (private val dataSource: DataSource) {
 
     private val logger by lazy { loggerFor<ProductRepository>() }
 
-    open suspend fun getProduct(id: Long): List<Product> {
-        try {
-            return dataSource.connection.use { con ->
-                con.prepareStatement(SELECT_QUERY).use { pst ->
-                    pst.setLong(1, id)
-                    pst.executeQuery().use { rs ->
-                        rs.use {
-                            generateSequence {
-                                Product.fromResultSet(rs)
-                            }.toList()
-                        }
-                    }
-                }
-            }
-        } catch (e: SQLException) {
-            logger.error(e.message, e)
-            throw ProductExceptions.SelectProductsError()
-        }
-    }
-
-    fun getProductById(productId: Long): Product? {
+    open suspend fun getProducts(): List<Product> {
         var connection: Connection? = null
         var statement: PreparedStatement? = null
         var rs: ResultSet? = null
 
         try {
             connection = dataSource.connection
+            statement = connection.prepareStatement(SELECT_QUERY)
+            rs = statement.executeQuery()
+            val result = mutableListOf<Product>()
+            while (rs.next()) {
+                result.add(
+                    Product.fromResultSet(rs)
+                )
+            }
+            return result
+        } catch (e: SQLException) {
+            logger.error(e.message, e)
+            throw ProductExceptions.SelectProductsError()
+        } finally {
+            rs?.close()
+            statement?.close()
+            connection?.close()
+        }
+    }
+
+    open suspend fun getProductById(productId: Long): Product? {
+        var connection: Connection? = null
+        var statement: PreparedStatement? = null
+        var rs: ResultSet? = null
+        try {
+            connection = dataSource.connection
             statement = connection.prepareStatement(SELECT_BY_ID_QUERY)
-            statement.setString(1, productId.toString())
+            statement.setLong(1, productId)
             rs = statement.executeQuery()
             return if (rs.next()) {
                 Product.fromResultSet(rs)
@@ -141,7 +146,14 @@ open class ProductRepository(private val dataSource: DataSource) {
                 name = ?, description = ?, start_date = ?, end_date = ?, 
                 days_range = ?, price = ?, tax = ?, is_active = ?
                 WHERE id = ?"""
-        const val DELETE_QUERY = "DELETE FROM products WHERE id = ?"
+        const val UPDATE_STATE_QUERY =
+            """UPDATE products SET
+                is_active = ?
+                WHERE id = ?"""
+        const val DELETE_QUERY =
+            """UPDATE products SET
+                is_active = false, is_deleted = true
+                WHERE id = ?"""
 
     }
 

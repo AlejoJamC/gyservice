@@ -1,6 +1,7 @@
 package com.alejojamc.config
 
 import com.alejojamc.composers.ControllerComposer
+import com.alejojamc.composers.ServiceComposer
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.typesafe.config.Config
 import io.ktor.application.Application
@@ -14,6 +15,7 @@ import io.ktor.routing.routing
 class WebServerConfig(
     application: Application,
     config: Config,
+    serviceComposer: ServiceComposer
 ) {
 
     init {
@@ -26,7 +28,7 @@ class WebServerConfig(
 
             routing {
                 route("/api/gy") {
-                    ControllerComposer(config = config, route = this)
+                    ControllerComposer(config = config, route = this, serviceComposer = serviceComposer)
                 }
             }
         }
