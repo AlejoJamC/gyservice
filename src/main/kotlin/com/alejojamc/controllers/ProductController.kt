@@ -1,5 +1,6 @@
 package com.alejojamc.controllers
 
+import com.alejojamc.entities.PauseRequest
 import com.alejojamc.entities.Product
 import com.alejojamc.exceptions.ProductExceptions
 import com.alejojamc.services.ProductService
@@ -17,23 +18,35 @@ class ProductController(
 
     init {
         route.route("/products") {
+            get {
+                call.respond(HttpStatusCode.OK, getProducts())
+            }
             post {
-                val brand = call.receive<Product>()
-                call.respond(HttpStatusCode.Created, insertProduct(brand))
+                val product = call.receive<Product>()
+                call.respond(HttpStatusCode.Created, insertProduct(product))
             }
             put {
-                val brand = call.receive<Product>()
-                updateProduct(brand)
+                val product = call.receive<Product>()
+                updateProduct(product)
                 call.respond(HttpStatusCode.NoContent)
             }
+
             route("/{productId}") {
                 get {
-                    val brandId = call.parameters[PRODUCT_ID_PARAM]
-                    getProductById(brandId)?.let { it1 -> call.respond(it1) }
+                    val productId = call.parameters[PRODUCT_ID_PARAM]
+                    getProductById(productId)?.let { it1 -> call.respond(it1) }
                 }
                 delete {
-                    val brandId = call.parameters[PRODUCT_ID_PARAM]
-                    deleteProduct(brandId)
+                    val productId = call.parameters[PRODUCT_ID_PARAM]
+                    deleteProduct(productId)
+                    call.respond(HttpStatusCode.NoContent)
+                }
+            }
+
+            route("/state") {
+                put {
+                    val request = call.receive<PauseRequest>()
+                    pauseUnpauseProduct(request)
                     call.respond(HttpStatusCode.NoContent)
                 }
             }
@@ -56,6 +69,10 @@ class ProductController(
 
     private suspend fun updateProduct(product: Product) {
         return productService.updateProduct(product)
+    }
+
+    private suspend fun pauseUnpauseProduct(pauseRequest: PauseRequest) {
+        return productService.pauseUnpauseProduct(pauseRequest)
     }
 
     private suspend fun deleteProduct(productId: String?) {

@@ -1,5 +1,6 @@
 package com.alejojamc.repositories
 
+import com.alejojamc.entities.PauseRequest
 import com.alejojamc.entities.Product
 import com.alejojamc.exceptions.ProductExceptions
 import com.alejojamc.utils.DATETIME_FORMAT_POSTGRES
@@ -11,7 +12,7 @@ import java.sql.SQLException
 import javax.sql.DataSource
 
 
-open class ProductRepository    (private val dataSource: DataSource) {
+open class ProductRepository(private val dataSource: DataSource) {
 
     private val logger by lazy { loggerFor<ProductRepository>() }
 
@@ -104,6 +105,21 @@ open class ProductRepository    (private val dataSource: DataSource) {
         } catch (e: SQLException) {
             logger.error(e.message, e)
             throw ProductExceptions.UpdateError(product.id.toString())
+        }
+    }
+
+    open suspend fun pauseUnpauseProduct(pauseRequest: PauseRequest) {
+        try {
+            return dataSource.connection.use { con ->
+                con.prepareStatement(UPDATE_STATE_QUERY).use { pst ->
+                    pst.setBoolean(1, pauseRequest.state)
+                    pst.setLong(2, pauseRequest.productId)
+                    pst.executeUpdate()
+                }
+            }
+        } catch (e: SQLException) {
+            logger.error(e.message, e)
+            throw ProductExceptions.UpdateError(pauseRequest.productId.toString())
         }
     }
 

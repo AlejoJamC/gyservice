@@ -1,5 +1,6 @@
 package com.alejojamc.services
 
+import com.alejojamc.entities.PauseRequest
 import com.alejojamc.entities.Product
 import com.alejojamc.repositories.ProductRepository
 import com.alejojamc.utils.loggerFor
@@ -33,6 +34,12 @@ class ProductService(
         logger.debug("On updateProduct [${Product}]")
 
         return productRepository.updateProduct(Product)
+    }
+
+    suspend fun pauseUnpauseProduct(pauseRequest: PauseRequest) {
+        logger.debug("On pauseUnpauseProduct [${pauseRequest}]")
+
+        return productRepository.pauseUnpauseProduct(pauseRequest)
     }
 
     suspend fun deleteProduct(ProductId: Long) {
