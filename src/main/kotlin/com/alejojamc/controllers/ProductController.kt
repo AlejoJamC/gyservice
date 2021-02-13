@@ -1,6 +1,5 @@
 package com.alejojamc.controllers
 
-import com.alejojamc.dto.ProductDTO
 import com.alejojamc.entities.Product
 import com.typesafe.config.Config
 import io.ktor.application.call
@@ -8,6 +7,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.*
+
 
 class ProductController(
     config: Config,
@@ -17,11 +17,11 @@ class ProductController(
     init {
         route.route("/products") {
             post {
-                val brand = call.receive<ProductDTO>()
+                val brand = call.receive<Product>()
                 call.respond(HttpStatusCode.Created, insertProduct(brand))
             }
             put {
-                val brand = call.receive<ProductDTO>()
+                val brand = call.receive<Product>()
                 updateProduct(brand)
                 call.respond(HttpStatusCode.NoContent)
             }
@@ -45,11 +45,11 @@ class ProductController(
         return null
     }
 
-    private suspend fun insertProduct(product: ProductDTO) {
+    private suspend fun insertProduct(product: Product) {
         // Add service
     }
 
-    private suspend fun updateProduct(product: ProductDTO) {
+    private suspend fun updateProduct(product: Product) {
         // Add service
     }
 

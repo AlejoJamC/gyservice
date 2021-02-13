@@ -24,7 +24,7 @@ data class Gyservice(
     val version: String,
 ) {
     init {
-        require(version.isNotBlank()) { "Propio version must not be blank" }
+        require(version.isNotBlank()) { "Gyservice version must not be blank" }
     }
 }
 
