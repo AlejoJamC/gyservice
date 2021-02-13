@@ -1,0 +1,76 @@
+@startuml
+
+autonumber
+
+actor User
+control App
+'In the scope of this exercise Authentication and Authorization Layer will be bypassed'
+control AuthLayer
+'Gyservice runs in internal VPC secure by AuthLayer'
+participant Gyservice
+
+User -> App: Get list of products
+App -> Gyservice: Get list of products
+Gyservice -> App: List of products
+App -> User: Render list of products
+
+loop N times - Check Product Detail
+User -> App: Select product
+App -> Gyservice: Get product detail
+Gyservice --> Gyservice: Product Detail
+Gyservice -> App: Product Detail
+App -> User: Render product Detail
+end
+
+autonumber stop
+group Login [1]
+User -> App: Login credentials
+App -> AuthLayer: process Auth
+AuthLayer -> App: Access granted
+App -> User: Continue shopping flow
+else 2 - Signup
+User -> App: Signup form
+App -> AuthLayer: Signup form data
+AuthLayer -> App: Success
+App -> User: Continue shopping flow
+else 3 - Recovery
+User --> App: Login credentials
+App --> AuthLayer: Login credentials
+AuthLayer --> App: (401 Unauthorized)
+App --> AuthLayer: Recovery flow
+AuthLayer --> AuthLayer: Generating recovery flow
+User --> App: Recovery data
+App --> AuthLayer:  Recovery data
+AuthLayer --> App: Success
+App --> User: Continue shopping flow
+end
+
+autonumber 10
+User -> App: Add product to shopping cart
+App -> Gyservice: Refresh user shopping cart
+Gyservice -> Gyservice: Validate other products
+autonumber stop
+alt Single product can be buy it at time
+Gyservice --> Gyservice: no other product can be added
+Gyservice --> App: Request replace product
+App --> Gyservice: Replace
+Gyservice --> Gyservice: Replace product
+end
+autonumber 13
+Gyservice -> Gyservice: Validate active/unpause subscriptions
+autonumber stop
+alt
+Gyservice --> Gyservice: Go to pause subscription flow
+end
+alt (Out of scope)
+Gyservice --> Gyservice: Payment API
+Gyservice --> Gyservice: Billing API
+Gyservice --> Gyservice: Mailing API
+Gyservice --> Gyservice: etc
+end
+autonumber 14
+Gyservice -> Gyservice: Create subscription plan
+Gyservice -> App: 200 OK
+App -> User: Success
+
+@enduml
