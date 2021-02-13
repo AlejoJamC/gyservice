@@ -12,11 +12,11 @@ import java.sql.SQLException
 import javax.sql.DataSource
 
 
-open class ProductRepository(private val dataSource: DataSource) {
+open class SubscriptionRepository(private val dataSource: DataSource) {
 
-    private val logger by lazy { loggerFor<ProductRepository>() }
+    private val logger by lazy { loggerFor<SubscriptionRepository>() }
 
-    open suspend fun getProducts(): List<Product> {
+    open suspend fun getSubscriptionsByUser(): List<Product> {
         var connection: Connection? = null
         var statement: PreparedStatement? = null
         var rs: ResultSet? = null
@@ -42,14 +42,14 @@ open class ProductRepository(private val dataSource: DataSource) {
         }
     }
 
-    open suspend fun getProductById(productId: Long): Product? {
+    open suspend fun getSubscriptionById(subscriptionId: Long): Product? {
         var connection: Connection? = null
         var statement: PreparedStatement? = null
         var rs: ResultSet? = null
         try {
             connection = dataSource.connection
             statement = connection.prepareStatement(SELECT_BY_ID_QUERY)
-            statement.setLong(1, productId)
+            statement.setLong(1, subscriptionId)
             rs = statement.executeQuery()
             return if (rs.next()) {
                 Product.fromResultSet(rs)
@@ -57,7 +57,7 @@ open class ProductRepository(private val dataSource: DataSource) {
         } catch (e: SQLException) {
             connection?.rollback()
             logger.error(e.message, e)
-            throw ProductExceptions.SelectProductByIdError(productId.toString())
+            throw ProductExceptions.SelectProductByIdError(subscriptionId.toString())
         } finally {
             rs?.close()
             statement?.close()

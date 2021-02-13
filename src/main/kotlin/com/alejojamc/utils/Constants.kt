@@ -10,6 +10,7 @@ const val EN = "en"
 // GLOBAL FIELD NAMES
 const val ID_FIELD = "id"
 const val IS_ACTIVE_FIELD = "is_active"
+const val IS_DELETED_FIELD = "is_deleted"
 
 // Datetime formats
 const val DATE_FORMAT = "YYYY-MM-DD"

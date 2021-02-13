@@ -15,6 +15,11 @@ sealed class ProductExceptions(
         code = "error.repository.product.bad.request"
     )
 
+    class ProductNotFound : ProductExceptions(
+        httpStatus = HttpStatusCode.BadRequest,
+        code = "error.repository.product.not.found"
+    )
+
     class SelectProductsError : ProductExceptions(
         httpStatus = HttpStatusCode.InternalServerError,
         code = "error.repository.product.list"

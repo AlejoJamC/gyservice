@@ -11,7 +11,7 @@ import io.ktor.response.respond
 import io.ktor.routing.*
 
 
-class ProductController(
+class SubscriptionController(
     route: Route,
     private val productService: ProductService
 ) {
