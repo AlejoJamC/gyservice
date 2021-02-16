@@ -1,0 +1,31 @@
+version: '3'
+services:
+  test:
+    image: openjdk:8-jdk-alpine
+    volumes:
+      - ${MY_WORKSPACE}:/ws
+    working_dir: /ws${WORKSPACE_PATH:-/}
+    user: ${MY_USER:-root}
+    depends_on:
+      - postgres
+      - redis
+    command: >
+      ./gradlew --no-daemon
+      -g ./.gradle-cache
+      -DDB_HOST=postgres
+      -DDB_NAME=gymondo
+      -DDB_USER=postgres
+      -DDB_PASSWORD=12345
+      -DDB_PORT=5432
+      -DREDIS_HOST=redis
+      -DREDIS_PORT=6379
+
+  postgres:
+    image: postgres:10
+    environment:
+      POSTGRES_DB: gymondo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+
+  redis:
+    image: redis:4.0
