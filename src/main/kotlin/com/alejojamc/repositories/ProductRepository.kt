@@ -108,21 +108,6 @@ open class ProductRepository(private val dataSource: DataSource) {
         }
     }
 
-    open suspend fun pauseUnpauseProduct(pauseRequest: PauseRequest) {
-        try {
-            return dataSource.connection.use { con ->
-                con.prepareStatement(UPDATE_STATE_QUERY).use { pst ->
-                    pst.setBoolean(1, pauseRequest.state)
-                    pst.setLong(2, pauseRequest.productId)
-                    pst.executeUpdate()
-                }
-            }
-        } catch (e: SQLException) {
-            logger.error(e.message, e)
-            throw ProductExceptions.UpdateError(pauseRequest.productId.toString())
-        }
-    }
-
     open suspend fun deleteProduct(productId: Long) {
         try {
             return dataSource.connection.use { con ->
@@ -157,10 +142,6 @@ open class ProductRepository(private val dataSource: DataSource) {
         const val UPDATE_QUERY =
             """UPDATE products SET
                 name = ?, description = ?, days_range = ?, price = ?, tax = ?, is_active = ?, is_deleted = ?
-                WHERE id = ?"""
-        const val UPDATE_STATE_QUERY =
-            """UPDATE products SET
-                is_active = ?
                 WHERE id = ?"""
         const val DELETE_QUERY =
             """UPDATE products SET

@@ -1,8 +1,7 @@
 package com.alejojamc.services
 
 import com.alejojamc.entities.PauseRequest
-import com.alejojamc.entities.Product
-import com.alejojamc.repositories.ProductRepository
+import com.alejojamc.entities.Subscription
 import com.alejojamc.repositories.SubscriptionRepository
 import com.alejojamc.utils.loggerFor
 
@@ -13,10 +12,10 @@ class SubscriptionService(
 
     private val logger by lazy { loggerFor<SubscriptionService>() }
 
-    suspend fun getSubscriptions(): List<Product> {
-        logger.debug("On getSubscriptions.")
+    suspend fun insertSubscription(Subscription: Subscription) {
+        logger.debug("On insertSubscription [${Subscription}]")
 
-        return subscriptionRepository.getSubscriptions()
+        return subscriptionRepository.insertSubscription(Subscription)
     }
 
     suspend fun getSubscriptionById(subscriptionId: Long): Subscription? {
@@ -25,16 +24,10 @@ class SubscriptionService(
         return subscriptionRepository.getSubscriptionById(subscriptionId)
     }
 
-    suspend fun insertSubscription(Subscription: Subscription) {
-        logger.debug("On insertSubscription [${Subscription}]")
+    suspend fun deleteSubscription(SubscriptionId: Long) {
+        logger.debug("On deleteSubscription [SubscriptionId=${SubscriptionId}]")
 
-        return subscriptionRepository.insertSubscription(Subscription)
-    }
-
-    suspend fun updateSubscription(Subscription: Subscription) {
-        logger.debug("On updateSubscription [${Subscription}]")
-
-        return subscriptionRepository.updateSubscription(Subscription)
+        return subscriptionRepository.deleteSubscription(SubscriptionId)
     }
 
     suspend fun pauseUnpauseSubscription(pauseRequest: PauseRequest) {
@@ -43,10 +36,10 @@ class SubscriptionService(
         return subscriptionRepository.pauseUnpauseSubscription(pauseRequest)
     }
 
-    suspend fun deleteSubscription(SubscriptionId: Long) {
-        logger.debug("On deleteSubscription [SubscriptionId=${SubscriptionId}]")
+    suspend fun getSubscriptionByUserId(userId: Long): List<Subscription> {
+        logger.debug("On getSubscriptionByUserId [userId=${userId}]")
 
-        return subscriptionRepository.deleteSubscription(SubscriptionId)
+        return subscriptionRepository.getSubscriptionByUserId(userId)
     }
 
 }

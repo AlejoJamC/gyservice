@@ -6,6 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class PauseRequest(
-    @JsonProperty("product_id") val productId: Long,
+    @JsonProperty("subscription_id") val subscriptionId: Long,
     val state: Boolean
 )

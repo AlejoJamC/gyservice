@@ -1,6 +1,5 @@
 package com.alejojamc.controllers
 
-import com.alejojamc.entities.PauseRequest
 import com.alejojamc.entities.Product
 import com.alejojamc.exceptions.ProductExceptions
 import com.alejojamc.services.ProductService
@@ -17,6 +16,7 @@ class ProductController(
 ) {
 
     init {
+
         route.route("/products") {
             get {
                 call.respond(HttpStatusCode.OK, getProducts())
@@ -43,14 +43,8 @@ class ProductController(
                 }
             }
 
-            route("/state") {
-                put {
-                    val request = call.receive<PauseRequest>()
-                    pauseUnpauseProduct(request)
-                    call.respond(HttpStatusCode.NoContent)
-                }
-            }
         }
+
     }
 
     private suspend fun getProducts(): List<Product> {
@@ -71,10 +65,6 @@ class ProductController(
         return productService.updateProduct(product)
     }
 
-    private suspend fun pauseUnpauseProduct(pauseRequest: PauseRequest) {
-        return productService.pauseUnpauseProduct(pauseRequest)
-    }
-
     private suspend fun deleteProduct(productId: String?) {
         return productId?.let {
             productService.deleteProduct(it.toLong())
@@ -82,7 +72,7 @@ class ProductController(
     }
 
     companion object {
-        const val PRODUCT_ID_PARAM = "productId"
+        private const val PRODUCT_ID_PARAM = "productId"
     }
 
 }
