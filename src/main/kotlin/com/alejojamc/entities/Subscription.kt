@@ -1,8 +1,10 @@
 package com.alejojamc.entities
 
+import com.alejojamc.utils.CREATED_AT_FIELD
 import com.alejojamc.utils.ID_FIELD
 import com.alejojamc.utils.IS_ACTIVE_FIELD
 import com.alejojamc.utils.IS_DELETED_FIELD
+import com.alejojamc.utils.UPDATED_AT_FIELD
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
@@ -14,8 +16,8 @@ import java.sql.ResultSet
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Subscription(
     val id: Long?,
-    val productId: Long?,
-    val userId: Long?,
+    val productId: Long,
+    val userId: Long,
     val startDate: String?,
     val endDate: String?,
     @get:JsonProperty(IS_ACTIVE_FIELD) val isActive: Boolean? = false,
@@ -29,8 +31,6 @@ data class Subscription(
         private const val USER_ID = "user_id"
         private const val START_DATE_FIELD = "start_date"
         private const val END_DATE_FIELD = "end_date"
-        private const val CREATED_AT_FIELD = "created_at"
-        private const val UPDATED_AT_FIELD = "updated_at"
 
         fun fromResultSet(rs: ResultSet) = Subscription(
             id = rs.getLong(ID_FIELD),

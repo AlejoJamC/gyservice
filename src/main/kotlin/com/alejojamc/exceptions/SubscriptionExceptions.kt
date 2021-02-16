@@ -20,27 +20,28 @@ sealed class SubscriptionExceptions(
         code = "error.repository.subscription.not.found"
     )
 
-    class SelectSubscriptionsError : SubscriptionExceptions(
-        httpStatus = HttpStatusCode.InternalServerError,
-        code = "error.repository.subscription.list"
-    )
-
     class SelectSubscriptionByIdError(subscriptionId: String) : SubscriptionExceptions(
         httpStatus = HttpStatusCode.InternalServerError,
         code = "error.repository.subscription.by.id",
         args = listOf(subscriptionId)
     )
 
-    class InsertError(subscriptionName: String) : SubscriptionExceptions(
+    class SelectSubscriptionByUserIdError(userId: String) : SubscriptionExceptions(
         httpStatus = HttpStatusCode.InternalServerError,
-        code = "error.repository.subscription.insert",
-        args = listOf(subscriptionName)
+        code = "error.repository.subscription.by.user.id",
+        args = listOf(userId)
     )
 
-    class UpdateError(subscriptionId: String) : SubscriptionExceptions(
+    class InsertError(productId: String, userId: String) : SubscriptionExceptions(
         httpStatus = HttpStatusCode.InternalServerError,
-        code = "error.repository.subscription.update",
-        args = listOf(subscriptionId)
+        code = "error.repository.subscription.insert",
+        args = listOf(productId, userId)
+    )
+
+    class UpdateStateError(subscriptionId: String, state: String) : SubscriptionExceptions(
+        httpStatus = HttpStatusCode.InternalServerError,
+        code = "error.repository.subscription.update.state",
+        args = listOf(subscriptionId, state)
     )
 
     class DeleteError(subscriptionId: String) : SubscriptionExceptions(

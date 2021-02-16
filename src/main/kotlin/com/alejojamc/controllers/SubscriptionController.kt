@@ -1,9 +1,9 @@
 package com.alejojamc.controllers
 
 import com.alejojamc.entities.PauseRequest
-import com.alejojamc.entities.Product
-import com.alejojamc.exceptions.ProductExceptions
-import com.alejojamc.services.ProductService
+import com.alejojamc.entities.Subscription
+import com.alejojamc.exceptions.SubscriptionExceptions
+import com.alejojamc.services.SubscriptionService
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
@@ -13,32 +13,24 @@ import io.ktor.routing.*
 
 class SubscriptionController(
     route: Route,
-    private val productService: ProductService
+    private val subscriptionService: SubscriptionService
 ) {
 
     init {
-        route.route("/products") {
-            get {
-                call.respond(HttpStatusCode.OK, getProducts())
-            }
+        route.route("/subscriptions") {
             post {
-                val product = call.receive<Product>()
-                call.respond(HttpStatusCode.Created, insertProduct(product))
-            }
-            put {
-                val product = call.receive<Product>()
-                updateProduct(product)
-                call.respond(HttpStatusCode.NoContent)
+                val product = call.receive<Subscription>()
+                call.respond(HttpStatusCode.Created, insertSubscription(product))
             }
 
-            route("/{productId}") {
+            route("/{subscriptionId}") {
                 get {
-                    val productId = call.parameters[PRODUCT_ID_PARAM]
-                    call.respond(HttpStatusCode.OK, getProductById(productId))
+                    val subId = call.parameters[SUBSCRIPTION_ID_PARAM]
+                    call.respond(HttpStatusCode.OK, getSubscriptionById(subId))
                 }
                 delete {
-                    val productId = call.parameters[PRODUCT_ID_PARAM]
-                    deleteProduct(productId)
+                    val productId = call.parameters[SUBSCRIPTION_ID_PARAM]
+                    deleteSubscription(productId)
                     call.respond(HttpStatusCode.NoContent)
                 }
             }
@@ -46,43 +38,50 @@ class SubscriptionController(
             route("/state") {
                 put {
                     val request = call.receive<PauseRequest>()
-                    pauseUnpauseProduct(request)
+                    pauseUnpauseSubscription(request)
                     call.respond(HttpStatusCode.NoContent)
                 }
+            }
+
+            route("/users/{userId}") {
+                get {
+                    val userId = call.parameters[USER_ID_PARAM]
+                    call.respond(HttpStatusCode.OK, getSubscriptionByUserId(userId))
+                }
+
             }
         }
     }
 
-    private suspend fun getProducts(): List<Product> {
-        return productService.getProducts()
+    private suspend fun insertSubscription(subscription: Subscription) {
+        return subscriptionService.insertSubscription(subscription)
     }
 
-    private suspend fun getProductById(productId: String?): Product {
-        return productId?.let {
-            productService.getProductById(it.toLong()) ?: throw ProductExceptions.ProductNotFound()
-        } ?: throw ProductExceptions.ProductBadRequest()
+    private suspend fun getSubscriptionById(subsId: String?): Subscription {
+        return subsId?.let {
+            subscriptionService.getSubscriptionById(it.toLong()) ?: throw SubscriptionExceptions.SubscriptionNotFound()
+        } ?: throw SubscriptionExceptions.SubscriptionBadRequest()
     }
 
-    private suspend fun insertProduct(product: Product) {
-        return productService.insertProduct(product)
+    private suspend fun deleteSubscription(subsId: String?) {
+        return subsId?.let {
+            subscriptionService.deleteSubscription(it.toLong())
+        } ?: throw SubscriptionExceptions.SubscriptionBadRequest()
     }
 
-    private suspend fun updateProduct(product: Product) {
-        return productService.updateProduct(product)
+    private suspend fun pauseUnpauseSubscription(pauseRequest: PauseRequest) {
+        return subscriptionService.pauseUnpauseSubscription(pauseRequest)
     }
 
-    private suspend fun pauseUnpauseProduct(pauseRequest: PauseRequest) {
-        return productService.pauseUnpauseProduct(pauseRequest)
-    }
-
-    private suspend fun deleteProduct(productId: String?) {
-        return productId?.let {
-            productService.deleteProduct(it.toLong())
-        } ?: throw ProductExceptions.ProductBadRequest()
+    private suspend fun getSubscriptionByUserId(userId: String?): List<Subscription> {
+        return userId?.let {
+            subscriptionService.getSubscriptionByUserId(it.toLong())
+        } ?: throw SubscriptionExceptions.SubscriptionBadRequest()
     }
 
     companion object {
-        const val PRODUCT_ID_PARAM = "productId"
+        const val SUBSCRIPTION_ID_PARAM = "subscriptionId"
+        const val USER_ID_PARAM = "userId"
     }
 
 }
