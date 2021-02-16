@@ -1,0 +1,45 @@
+language: java
+install: skip
+
+os: linux
+dist: xenial
+jdk: openjdk8
+
+services:
+  - postgresql
+  - redis
+
+before_script:
+  - psql -c 'create database gymondo' -U postgres
+
+addons:
+  postgresql: "10"
+  apt:
+    packages:
+      - postgresql-10
+      - postgresql-client-10
+
+env:
+  global:
+    - DB_HOST=localhost
+    - DB_NAME=gymondo
+    - DB_USER=postgres
+    - DB_PASSWORD=12345
+    - DB_PORT=55000
+    - REDIS_HOST=localhost
+    - REDIS_PORT=6379
+    - APP_COUNTRY_CODE=co
+    - APP_LOCALE=en
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+script:
+  - ./gradlew -x test build
+  - ./gradlew test --info
